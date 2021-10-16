@@ -56,7 +56,7 @@ func (c *configBuilderStruct) Build(host string) Config {
 	if c.config.httpClient == nil {
 		c.config.httpClient = NewDefaultHttpClient(DefaultTimeout, c.verboseLog)
 	}
-	c.config.httpClient.Transport
+	//c.config.httpClient.Transport
 
 	c.config.host = host
 
