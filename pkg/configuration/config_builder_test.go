@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-type customTransportFake struct {}
+type customTransportFake struct{}
 
 func (t *customTransportFake) RoundTrip(req *http.Request) (resp *http.Response, err error) {
-	return nil,nil
+	return nil, nil
 }
 
 func TestConfigBuilder_ShouldAssignNewHttpClient(t *testing.T) {
@@ -137,7 +137,7 @@ func TestConfigBuilder_ShouldReturnVerboseConfigImplementation(t *testing.T) {
 
 	transportGot := reflect.TypeOf(got.httpClient.Transport).String()
 
-	if  transportGot != "*configuration.loggingRoundTripper" {
+	if transportGot != "*configuration.loggingRoundTripper" {
 		t.Errorf("transport wanted: *configuration.loggingRoundTripper \n transport got: %v", transportGot)
 	}
 }
@@ -148,7 +148,7 @@ func TestConfigBuilder_ShouldReturnNonVerboseConfigImplementation(t *testing.T) 
 		apiVersion: "v2",
 		port:       "8080",
 		verboseLog: false,
-		httpClient: &http.Client{ Transport: http.DefaultTransport},
+		httpClient: &http.Client{Transport: http.DefaultTransport},
 	}
 
 	subject := NewConfigBuilder().
@@ -166,14 +166,14 @@ func TestConfigBuilder_ShouldReturnNonVerboseConfigImplementation(t *testing.T) 
 
 	transportGot := reflect.TypeOf(got.httpClient.Transport).String()
 
-	if  transportGot != "*http.Transport" {
+	if transportGot != "*http.Transport" {
 		t.Errorf("transport wanted: *http.Transport \n transport got: %v", transportGot)
 	}
 }
 
 func TestConfigBuilder_ShouldSetVerboseLoggingNonNilTransport(t *testing.T) {
 	want := "*configuration.loggingRoundTripper"
-	subject := &http.Client{ Transport: &customTransportFake{}}
+	subject := &http.Client{Transport: &customTransportFake{}}
 	setVerboseLogging(subject)
 	got := reflect.TypeOf(subject.Transport).String()
 

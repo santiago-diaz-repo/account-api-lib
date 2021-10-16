@@ -1,8 +1,8 @@
 package api_client
 
 import (
-	"accountapi-lib-form3/configuration"
-	"accountapi-lib-form3/models"
+	configuration2 "accountapi-lib-form3/pkg/configuration"
+	models2 "accountapi-lib-form3/pkg/models"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,7 +12,7 @@ import (
 )
 
 type AccountService struct {
-	config *configuration.Config
+	config *configuration2.Config
 }
 
 const (
@@ -24,13 +24,13 @@ const (
 	ApplicationJson   = "application/json"
 )
 
-func NewAccountService(config *configuration.Config) AccountManagement {
+func NewAccountService(config *configuration2.Config) AccountManagement {
 	return &AccountService{
 		config: config,
 	}
 }
 
-func (a *AccountService) CreateAccount(reqModel *models.CreateRequest) (*models.CreateResponse, error) {
+func (a *AccountService) CreateAccount(reqModel *models2.CreateRequest) (*models2.CreateResponse, error) {
 
 	inp, err := json.Marshal(reqModel)
 	if err != nil {
@@ -60,31 +60,31 @@ func (a *AccountService) CreateAccount(reqModel *models.CreateRequest) (*models.
 	}
 
 	if response.StatusCode != http.StatusCreated {
-		var outErr models.ResponseError
+		var outErr models2.ResponseError
 		err = json.Unmarshal(body, &outErr)
 		if err != nil {
 			return nil, fmt.Errorf("Account create: Failed decoding error response: %v\n", err)
 		}
 
-		return &models.CreateResponse{
+		return &models2.CreateResponse{
 			StatusCode:   response.StatusCode,
 			ErrorMessage: outErr.ErrorMessage,
 		}, nil
 	}
 
-	var out models.ResponseObject
+	var out models2.ResponseObject
 	err = json.Unmarshal(body, &out)
 	if err != nil {
 		return nil, fmt.Errorf("Account create: Failed decoding response: %v\n", err)
 	}
 
-	return &models.CreateResponse{
+	return &models2.CreateResponse{
 		ResBody:    &out,
 		StatusCode: response.StatusCode,
 	}, nil
 }
 
-func (a *AccountService) DeleteAccount(reqModel *models.DeleteRequest) (*models.DeleteResponse, error) {
+func (a *AccountService) DeleteAccount(reqModel *models2.DeleteRequest) (*models2.DeleteResponse, error) {
 	endpoint := fmt.Sprintf("%s%s/%s?version=%d", (*a.config).APIBasePath(), AccountsPath, reqModel.AccountId, reqModel.Version)
 
 	request, err := http.NewRequest(http.MethodDelete, endpoint, nil)
@@ -104,25 +104,25 @@ func (a *AccountService) DeleteAccount(reqModel *models.DeleteRequest) (*models.
 		return nil, fmt.Errorf("Account delete: Failed reading response Body: %v\n", err)
 	}
 
-	if response.StatusCode != http.StatusNoContent {
-		var outErr models.ResponseError
+	if response.StatusCode != http.StatusNoContent && response.StatusCode != http.StatusNotFound {
+		var outErr models2.ResponseError
 		err = json.Unmarshal(body, &outErr)
 		if err != nil {
 			return nil, fmt.Errorf("Account delete: Failed decoding error response: %v\n", err)
 		}
 
-		return &models.DeleteResponse{
+		return &models2.DeleteResponse{
 			StatusCode:   response.StatusCode,
 			ErrorMessage: outErr.ErrorMessage,
 		}, nil
 	}
 
-	return &models.DeleteResponse{
+	return &models2.DeleteResponse{
 		StatusCode: response.StatusCode,
 	}, nil
 }
 
-func (a *AccountService) FetchAccount(reqModel *models.FetchRequest) (*models.FetchResponse, error) {
+func (a *AccountService) FetchAccount(reqModel *models2.FetchRequest) (*models2.FetchResponse, error) {
 	endpoint := fmt.Sprintf("%s%s/%s", (*a.config).APIBasePath(), AccountsPath, reqModel.AccountId)
 
 	request, err := http.NewRequest(http.MethodGet, endpoint, nil)
@@ -144,25 +144,25 @@ func (a *AccountService) FetchAccount(reqModel *models.FetchRequest) (*models.Fe
 	}
 
 	if response.StatusCode != http.StatusOK {
-		var outErr models.ResponseError
+		var outErr models2.ResponseError
 		err = json.Unmarshal(body, &outErr)
 		if err != nil {
 			return nil, fmt.Errorf("Account fetch: Failed decoding error response: %v\n", err)
 		}
 
-		return &models.FetchResponse{
+		return &models2.FetchResponse{
 			StatusCode:   response.StatusCode,
 			ErrorMessage: outErr.ErrorMessage,
 		}, nil
 	}
 
-	var out models.ResponseObject
+	var out models2.ResponseObject
 	err = json.Unmarshal(body, &out)
 	if err != nil {
 		return nil, fmt.Errorf("Account fetch: Failed decoding response: %v\n", err)
 	}
 
-	return &models.FetchResponse{
+	return &models2.FetchResponse{
 		ResBody:    &out,
 		StatusCode: response.StatusCode,
 	}, nil

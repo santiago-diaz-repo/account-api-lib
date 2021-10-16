@@ -66,7 +66,7 @@ func (c *configBuilderStruct) Build(host string) Config {
 	return &c.config
 }
 
-func setVerboseLogging(httpClient *http.Client)  {
+func setVerboseLogging(httpClient *http.Client) {
 	transport := httpClient.Transport
 
 	if transport == nil {

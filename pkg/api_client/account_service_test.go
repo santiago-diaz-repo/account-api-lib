@@ -1,8 +1,8 @@
 package api_client
 
 import (
-	"accountapi-lib-form3/configuration"
-	"accountapi-lib-form3/models"
+	"accountapi-lib-form3/pkg/configuration"
+	"accountapi-lib-form3/pkg/models"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -106,6 +106,7 @@ func TestAccountService_ShouldReturnFailedCreation(t *testing.T) {
 func TestAccountService_ShouldReturnSuccessfulDeletion(t *testing.T) {
 	input := models.DeleteRequest{
 		AccountId: AccountId,
+		Version:   0,
 	}
 
 	want := &models.DeleteResponse{
@@ -122,17 +123,38 @@ func TestAccountService_ShouldReturnSuccessfulDeletion(t *testing.T) {
 	}
 }
 
-func TestAccountService_ShouldReturnFailedDeletion(t *testing.T) {
+func TestAccountService_ShouldReturnNoMessageOnDeletionNotFound(t *testing.T) {
 	input := models.DeleteRequest{
 		AccountId: AccountId,
+		Version:   0,
 	}
 
 	want := &models.DeleteResponse{
 		StatusCode:   404,
+		ErrorMessage: "",
+	}
+
+	builder := getBuilder("", 404, false, RightPort)
+	subject := NewAccountService(&builder)
+	got, _ := subject.DeleteAccount(&input)
+
+	if !reflect.DeepEqual(*got, *want) {
+		t.Errorf("wanted: %s\n got: %s", getStringStruct(want), getStringStruct(got))
+	}
+}
+
+func TestAccountService_ShouldReturnFailedDeletion(t *testing.T) {
+	input := models.DeleteRequest{
+		AccountId: AccountId,
+		Version:   0,
+	}
+
+	want := &models.DeleteResponse{
+		StatusCode:   400,
 		ErrorMessage: "id is not a valid uuid",
 	}
 
-	builder := getBuilder(WrongJsonResponse, 404, false, RightPort)
+	builder := getBuilder(WrongJsonResponse, 400, false, RightPort)
 	subject := NewAccountService(&builder)
 	got, _ := subject.DeleteAccount(&input)
 
@@ -237,7 +259,7 @@ func TestAccountService_ShouldReturnFailureWhenDecodingResponse(t *testing.T) {
 	}{
 		{"rightCreation", 201, "Failed decoding response"},
 		{"wrongCreation", 409, "Failed decoding error response"},
-		{"wrongDeletion", 404, "Failed decoding error response"},
+		{"wrongDeletion", 400, "Failed decoding error response"},
 		{"rightFetch", 200, "Failed decoding response"},
 		{"wrongFetch", 404, "Failed decoding error response"},
 	}
