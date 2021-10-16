@@ -55,10 +55,25 @@ func (c *configBuilderStruct) Verbose() ConfigBuilder {
 func (c *configBuilderStruct) Build(host string) Config {
 	if c.config.httpClient == nil {
 		c.config.httpClient = NewDefaultHttpClient(DefaultTimeout, c.verboseLog)
+	} else {
+		if c.verboseLog {
+			setVerboseLogging(c.httpClient)
+		}
 	}
-	//c.config.httpClient.Transport
 
 	c.config.host = host
 
 	return &c.config
+}
+
+func setVerboseLogging(httpClient *http.Client)  {
+	transport := httpClient.Transport
+
+	if transport == nil {
+		transport = http.DefaultTransport
+	}
+
+	httpClient.Transport = &loggingRoundTripper{
+		defaultRoundTripper: transport,
+	}
 }

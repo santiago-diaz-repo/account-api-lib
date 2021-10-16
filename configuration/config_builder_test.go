@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+type customTransportFake struct {}
+
+func (t *customTransportFake) RoundTrip(req *http.Request) (resp *http.Response, err error) {
+	return nil,nil
+}
+
 func TestConfigBuilder_ShouldAssignNewHttpClient(t *testing.T) {
 	subject := configBuilderStruct{
 		config{
@@ -106,7 +112,7 @@ func TestConfigBuilder_ShouldReturnBasicConfigImplementation(t *testing.T) {
 	}
 }
 
-func TestConfigBuilder_ShouldReturnCustomConfigImplementation(t *testing.T) {
+func TestConfigBuilder_ShouldReturnVerboseConfigImplementation(t *testing.T) {
 	want := &config{
 		host:       "test",
 		apiVersion: "v2",
@@ -127,5 +133,76 @@ func TestConfigBuilder_ShouldReturnCustomConfigImplementation(t *testing.T) {
 
 	if !reflect.DeepEqual(*got, *want) {
 		t.Errorf("wanted: %#v\n got: %#v", want, got)
+	}
+
+	transportGot := reflect.TypeOf(got.httpClient.Transport).String()
+
+	if  transportGot != "*configuration.loggingRoundTripper" {
+		t.Errorf("transport wanted: *configuration.loggingRoundTripper \n transport got: %v", transportGot)
+	}
+}
+
+func TestConfigBuilder_ShouldReturnNonVerboseConfigImplementation(t *testing.T) {
+	want := &config{
+		host:       "test",
+		apiVersion: "v2",
+		port:       "8080",
+		verboseLog: false,
+		httpClient: &http.Client{ Transport: http.DefaultTransport},
+	}
+
+	subject := NewConfigBuilder().
+		WithHttpClient(want.httpClient).
+		WithPort("8080").
+		WithAPIVersion("v2").
+		Build("test")
+
+	valueType := reflect.ValueOf(subject)
+	got := valueType.Interface().(*config)
+
+	if !reflect.DeepEqual(*got, *want) {
+		t.Errorf("wanted: %#v\n got: %#v", want, got)
+	}
+
+	transportGot := reflect.TypeOf(got.httpClient.Transport).String()
+
+	if  transportGot != "*http.Transport" {
+		t.Errorf("transport wanted: *http.Transport \n transport got: %v", transportGot)
+	}
+}
+
+func TestConfigBuilder_ShouldSetVerboseLoggingNonNilTransport(t *testing.T) {
+	want := "*configuration.loggingRoundTripper"
+	subject := &http.Client{ Transport: &customTransportFake{}}
+	setVerboseLogging(subject)
+	got := reflect.TypeOf(subject.Transport).String()
+
+	if got != want {
+		t.Errorf("wanted: %v\n got: %v", want, got)
+	}
+
+	internalTransport := reflect.ValueOf(subject.Transport).Interface().(*loggingRoundTripper)
+	internalTransportGot := reflect.TypeOf(internalTransport.defaultRoundTripper).String()
+
+	if internalTransportGot != "*configuration.customTransportFake" {
+		t.Errorf("wanted: *configuration.customTransportFake\n got: %v", internalTransportGot)
+	}
+}
+
+func TestConfigBuilder_ShouldSetVerboseLoggingNilTransport(t *testing.T) {
+	want := "*configuration.loggingRoundTripper"
+	subject := &http.Client{}
+	setVerboseLogging(subject)
+	got := reflect.TypeOf(subject.Transport).String()
+
+	if got != want {
+		t.Errorf("wanted: %v\n got: %v", want, got)
+	}
+
+	internalTransport := reflect.ValueOf(subject.Transport).Interface().(*loggingRoundTripper)
+	internalTransportGot := reflect.TypeOf(internalTransport.defaultRoundTripper).String()
+
+	if internalTransportGot != "*http.Transport" {
+		t.Errorf("wanted: *http.Transport\n got: %v", internalTransportGot)
 	}
 }
