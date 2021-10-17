@@ -49,11 +49,12 @@ func getBuilder(resp string, statusCode int, isError bool, port string) configur
 		},
 	}
 
-	builder := configuration.NewConfigBuilder()
+	builder := configuration.NewDefaultConfigBuilder()
 	return builder.
+		WithHost("fake").
 		WithPort(port).
 		WithHttpClient(client).
-		Build("fake")
+		Build()
 }
 
 func getStringStruct(data interface{}) string {

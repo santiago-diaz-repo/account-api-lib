@@ -8,9 +8,10 @@ import (
 type ConfigBuilder interface {
 	WithHttpClient(*http.Client) ConfigBuilder
 	WithAPIVersion(string) ConfigBuilder
+	WithHost(string) ConfigBuilder
 	WithPort(string) ConfigBuilder
 	Verbose() ConfigBuilder
-	Build(string) Config
+	Build() Config
 }
 
 type configBuilderStruct struct {
@@ -22,16 +23,18 @@ const (
 	DefaultPort       = "80"
 	DefaultTimeout    = 4 * time.Second
 	DefaultVerbose    = false
+	DefaultHost       = "localhost"
 )
 
-// NewConfigBuilder creates a new default configuration, everything can be
+// NewDefaultConfigBuilder creates a new default configuration, everything can be
 // modified by other methods defined in this file. In order to modify timeout
 // it is possible to change the default http.Client.
-func NewConfigBuilder() ConfigBuilder {
+func NewDefaultConfigBuilder() ConfigBuilder {
 	configBuilder := new(configBuilderStruct)
 	configBuilder.config.port = DefaultPort
 	configBuilder.config.apiVersion = DefaultAPIVersion
 	configBuilder.config.verboseLog = DefaultVerbose
+	configBuilder.config.host = DefaultHost
 	return configBuilder
 }
 
@@ -42,6 +45,11 @@ func (c *configBuilderStruct) WithHttpClient(httpClient *http.Client) ConfigBuil
 
 func (c *configBuilderStruct) WithAPIVersion(apiVersion string) ConfigBuilder {
 	c.config.apiVersion = apiVersion
+	return c
+}
+
+func (c *configBuilderStruct) WithHost(host string) ConfigBuilder {
+	c.config.host = host
 	return c
 }
 
@@ -62,7 +70,8 @@ func (c *configBuilderStruct) Verbose() ConfigBuilder {
 //
 // It is important to clarify that a component which uses this library has to pass around the host
 // where the backend API is located.
-func (c *configBuilderStruct) Build(host string) Config {
+func (c *configBuilderStruct) Build() Config {
+
 	if c.config.httpClient == nil {
 		c.config.httpClient = NewDefaultHttpClient(DefaultTimeout, c.verboseLog)
 	} else {
@@ -70,8 +79,6 @@ func (c *configBuilderStruct) Build(host string) Config {
 			setVerboseLogging(c.httpClient)
 		}
 	}
-
-	c.config.host = host
 
 	return &c.config
 }

@@ -45,6 +45,22 @@ func TestConfigBuilder_ShouldAssignNewAPIVersion(t *testing.T) {
 	}
 }
 
+func TestConfigBuilder_ShouldAssignNewHost(t *testing.T) {
+	subject := configBuilderStruct{
+		config{
+			host: "localhost",
+		},
+	}
+
+	want := "test.host"
+	subject.WithHost(want)
+	got := subject.config.host
+
+	if got != want {
+		t.Errorf("wanted: %s\n got: %s", want, got)
+	}
+}
+
 func TestConfigBuilder_ShouldAssignNewPort(t *testing.T) {
 	subject := configBuilderStruct{
 		config{
@@ -86,8 +102,8 @@ func TestConfigBuilder_ShouldReturnBasicConfigImplementation(t *testing.T) {
 		httpClient: &http.Client{Timeout: 4 * time.Second},
 	}
 
-	subject := NewConfigBuilder().
-		Build("localhost")
+	subject := NewDefaultConfigBuilder().
+		Build()
 	valueType := reflect.ValueOf(subject)
 	got := valueType.Interface().(*config)
 
@@ -121,12 +137,13 @@ func TestConfigBuilder_ShouldReturnVerboseConfigImplementation(t *testing.T) {
 		httpClient: &http.Client{},
 	}
 
-	subject := NewConfigBuilder().
+	subject := NewDefaultConfigBuilder().
 		WithHttpClient(want.httpClient).
+		WithHost("test").
 		WithPort("8080").
 		WithAPIVersion("v2").
 		Verbose().
-		Build("test")
+		Build()
 
 	valueType := reflect.ValueOf(subject)
 	got := valueType.Interface().(*config)
@@ -151,11 +168,12 @@ func TestConfigBuilder_ShouldReturnNonVerboseConfigImplementation(t *testing.T) 
 		httpClient: &http.Client{Transport: http.DefaultTransport},
 	}
 
-	subject := NewConfigBuilder().
+	subject := NewDefaultConfigBuilder().
 		WithHttpClient(want.httpClient).
+		WithHost("test").
 		WithPort("8080").
 		WithAPIVersion("v2").
-		Build("test")
+		Build()
 
 	valueType := reflect.ValueOf(subject)
 	got := valueType.Interface().(*config)
