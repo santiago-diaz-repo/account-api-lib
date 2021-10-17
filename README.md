@@ -97,6 +97,13 @@ fmt.Printf("%d",res.StatusCode)
 
 ```
 
+## Considerations about docker-compose
+1. I created a Dockerfile in which I am executing unit and integrations tests with verbose output.
+2. I took your docker-compose, add my image, which is built and executed when executing `docker-compose up`,  and versioned it in my repository.
+3. To run your docker-compose I added the Database creation script to my repository. 
+4. To avoid errors related to network when executing `docker-compose up`, I am defining a network called *acct-lib-santiago*.
+
+
 ## Specification of errors
 
 | Code | Description |
