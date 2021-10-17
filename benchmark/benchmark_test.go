@@ -41,6 +41,11 @@ func BenchmarkWithoutVerbose(b *testing.B) {
 	}
 }
 
+// BenchmarkWithVerbose allows to determine impact that enabling verbose log has in comparison to
+// executing API invocation without verbose log enabled.
+// According to comparison between this method and BenchmarkWithoutVerbose, it is possible to say that
+// enabling verbose log may reduce performance up to 90%, so verbose log should be used only to debug
+// purposes.
 func BenchmarkWithVerbose(b *testing.B) {
 	req := models2.FetchRequest{
 		AccountId: "ebb084cb-5cb7-49b5-b61c-ea0f7036e4b6",
