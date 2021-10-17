@@ -1,9 +1,9 @@
 package benchmark
 
 import (
-	api_client2 "accountapi-lib-form3/pkg/api_client"
-	configuration2 "accountapi-lib-form3/pkg/configuration"
-	models2 "accountapi-lib-form3/pkg/models"
+	"accountapi-lib-form3/pkg/api_client"
+	"accountapi-lib-form3/pkg/configuration"
+	"accountapi-lib-form3/pkg/models"
 	"bytes"
 	"io/ioutil"
 	"net/http"
@@ -22,7 +22,7 @@ func (t *TransportFake) RoundTrip(req *http.Request) (resp *http.Response, err e
 }
 
 func BenchmarkWithoutVerbose(b *testing.B) {
-	req := models2.FetchRequest{
+	req := models.FetchRequest{
 		AccountId: "ebb084cb-5cb7-49b5-b61c-ea0f7036e4b6",
 	}
 
@@ -30,11 +30,12 @@ func BenchmarkWithoutVerbose(b *testing.B) {
 		Transport: &TransportFake{},
 	}
 
-	subject := configuration2.NewConfigBuilder().
+	subject := configuration.NewDefaultConfigBuilder().
+		WithHost("fake").
 		WithHttpClient(client).
-		Build("fake")
+		Build()
 
-	account := api_client2.NewAccountService(&subject)
+	account := api_client.NewAccountService(&subject)
 
 	for i := 0; i < b.N; i++ {
 		_, _ = account.FetchAccount(&req)
@@ -47,7 +48,7 @@ func BenchmarkWithoutVerbose(b *testing.B) {
 // enabling verbose log may reduce performance up to 90%, so verbose log should be used only to debug
 // purposes.
 func BenchmarkWithVerbose(b *testing.B) {
-	req := models2.FetchRequest{
+	req := models.FetchRequest{
 		AccountId: "ebb084cb-5cb7-49b5-b61c-ea0f7036e4b6",
 	}
 
@@ -55,12 +56,13 @@ func BenchmarkWithVerbose(b *testing.B) {
 		Transport: &TransportFake{},
 	}
 
-	subject := configuration2.NewConfigBuilder().
+	subject := configuration.NewDefaultConfigBuilder().
+		WithHost("fake").
 		WithHttpClient(client).
 		Verbose().
-		Build("fake")
+		Build()
 
-	account := api_client2.NewAccountService(&subject)
+	account := api_client.NewAccountService(&subject)
 
 	for i := 0; i < b.N; i++ {
 		_, _ = account.FetchAccount(&req)

@@ -22,9 +22,9 @@ func Test_CreateAccount(t *testing.T) {
 
 	id := uuid.New().String()
 
-	config := configuration.NewConfigBuilder().
+	config := configuration.NewDefaultConfigBuilder().
 		WithPort("8090").
-		Build("localhost")
+		Build()
 
 	subject := api_client.NewAccountService(&config)
 

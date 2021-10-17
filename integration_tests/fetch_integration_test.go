@@ -21,9 +21,9 @@ func Test_FetchAccount(t *testing.T) {
 	createInput.Data.ID = id
 	createInput.Data.OrganisationID = id
 
-	config := configuration.NewConfigBuilder().
+	config := configuration.NewDefaultConfigBuilder().
 		WithPort("8090").
-		Build("localhost")
+		Build()
 
 	subject := api_client.NewAccountService(&config)
 	_, err := subject.CreateAccount(&createInput)
