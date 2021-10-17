@@ -76,11 +76,9 @@ accountService := NewAccountService(&config)
 let's create a `DeleteRequest` object:
    
    ```
-req := models.DeleteRequest{ 
-   AccountId: "12ab1977-6894-4d82-9968-4044df675fd9",
-   Version:   0,
-}
-
+    req := models.DeleteRequest{ 
+       AccountId: "12ab1977-6894-4d82-9968-4044df675fd9",
+       Version:   0}
    ```
    
 4. Invoke method that you need to execute against the account API. Following the step 3, let's implement `Delete` operation.
