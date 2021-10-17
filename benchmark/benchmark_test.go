@@ -37,7 +37,7 @@ func BenchmarkWithoutVerbose(b *testing.B) {
 	account := api_client2.NewAccountService(&subject)
 
 	for i := 0; i < b.N; i++ {
-		account.FetchAccount(&req)
+		_, _ = account.FetchAccount(&req)
 	}
 }
 
@@ -58,6 +58,6 @@ func BenchmarkWithVerbose(b *testing.B) {
 	account := api_client2.NewAccountService(&subject)
 
 	for i := 0; i < b.N; i++ {
-		account.FetchAccount(&req)
+		_, _ = account.FetchAccount(&req)
 	}
 }

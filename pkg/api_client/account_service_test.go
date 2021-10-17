@@ -63,10 +63,10 @@ func getStringStruct(data interface{}) string {
 
 func TestAccountService_ShouldReturnSuccessfulCreation(t *testing.T) {
 	var input models.CreateRequest
-	json.Unmarshal([]byte(CreationRequest), &input)
+	_ = json.Unmarshal([]byte(CreationRequest), &input)
 
 	var responseObject models.ResponseObject
-	json.Unmarshal([]byte(RightJsonResponse), &responseObject)
+	_ = json.Unmarshal([]byte(RightJsonResponse), &responseObject)
 	want := &models.CreateResponse{
 		ResBody:      &responseObject,
 		StatusCode:   201,
@@ -84,10 +84,10 @@ func TestAccountService_ShouldReturnSuccessfulCreation(t *testing.T) {
 
 func TestAccountService_ShouldReturnFailedCreation(t *testing.T) {
 	var input models.CreateRequest
-	json.Unmarshal([]byte(CreationRequest), &input)
+	_ = json.Unmarshal([]byte(CreationRequest), &input)
 
 	var responseObject models.ResponseError
-	json.Unmarshal([]byte(WrongJsonResponse), &responseObject)
+	_ = json.Unmarshal([]byte(WrongJsonResponse), &responseObject)
 	want := &models.CreateResponse{
 		ResBody:      nil,
 		StatusCode:   409,
@@ -169,7 +169,7 @@ func TestAccountService_ShouldReturnSuccessfulFetch(t *testing.T) {
 	}
 
 	var responseObject models.ResponseObject
-	json.Unmarshal([]byte(RightJsonResponse), &responseObject)
+	_ = json.Unmarshal([]byte(RightJsonResponse), &responseObject)
 	want := &models.FetchResponse{
 		ResBody:      &responseObject,
 		StatusCode:   200,

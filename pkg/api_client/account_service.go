@@ -122,6 +122,7 @@ func (a *AccountService) DeleteAccount(reqModel *models2.DeleteRequest) (*models
 	}, nil
 }
 
+// FetchAccount allows to get a particular account by searching for its ID
 func (a *AccountService) FetchAccount(reqModel *models2.FetchRequest) (*models2.FetchResponse, error) {
 	endpoint := fmt.Sprintf("%s%s/%s", (*a.config).APIBasePath(), AccountsPath, reqModel.AccountId)
 
