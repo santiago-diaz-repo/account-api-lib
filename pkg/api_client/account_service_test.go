@@ -69,9 +69,8 @@ func TestAccountService_ShouldReturnSuccessfulCreation(t *testing.T) {
 	var responseObject models.ResponseObject
 	_ = json.Unmarshal([]byte(RightJsonResponse), &responseObject)
 	want := &models.CreateResponse{
-		ResBody:      &responseObject,
-		StatusCode:   201,
-		ErrorMessage: "",
+		ResBody:    &responseObject,
+		StatusCode: 201,
 	}
 
 	builder := getBuilder(RightJsonResponse, 201, false, RightPort)
@@ -89,18 +88,14 @@ func TestAccountService_ShouldReturnFailedCreation(t *testing.T) {
 
 	var responseObject models.ResponseError
 	_ = json.Unmarshal([]byte(WrongJsonResponse), &responseObject)
-	want := &models.CreateResponse{
-		ResBody:      nil,
-		StatusCode:   409,
-		ErrorMessage: responseObject.ErrorMessage,
-	}
+	want := "Create: 409 - id is not a valid uuid"
 
 	builder := getBuilder(WrongJsonResponse, 409, false, RightPort)
 	subject := NewAccountService(&builder)
-	got, _ := subject.CreateAccount(&input)
+	_, got := subject.CreateAccount(&input)
 
-	if !reflect.DeepEqual(*got, *want) {
-		t.Errorf("wanted: %s\n got: %s", getStringStruct(want), getStringStruct(got))
+	if got.Error() != want {
+		t.Errorf("wanted: %s\n got: %s", want, got.Error())
 	}
 }
 
@@ -111,8 +106,7 @@ func TestAccountService_ShouldReturnSuccessfulDeletion(t *testing.T) {
 	}
 
 	want := &models.DeleteResponse{
-		StatusCode:   204,
-		ErrorMessage: "",
+		StatusCode: 204,
 	}
 
 	builder := getBuilder("", 204, false, RightPort)
@@ -130,17 +124,14 @@ func TestAccountService_ShouldReturnNoMessageOnDeletionNotFound(t *testing.T) {
 		Version:   0,
 	}
 
-	want := &models.DeleteResponse{
-		StatusCode:   404,
-		ErrorMessage: "",
-	}
+	want := "Delete: 404 - "
 
 	builder := getBuilder("", 404, false, RightPort)
 	subject := NewAccountService(&builder)
-	got, _ := subject.DeleteAccount(&input)
+	_, got := subject.DeleteAccount(&input)
 
-	if !reflect.DeepEqual(*got, *want) {
-		t.Errorf("wanted: %s\n got: %s", getStringStruct(want), getStringStruct(got))
+	if got.Error() != want {
+		t.Errorf("wanted: %s\n got: %s", want, got.Error())
 	}
 }
 
@@ -150,17 +141,14 @@ func TestAccountService_ShouldReturnFailedDeletion(t *testing.T) {
 		Version:   0,
 	}
 
-	want := &models.DeleteResponse{
-		StatusCode:   400,
-		ErrorMessage: "id is not a valid uuid",
-	}
+	want := "Delete: 400 - id is not a valid uuid"
 
 	builder := getBuilder(WrongJsonResponse, 400, false, RightPort)
 	subject := NewAccountService(&builder)
-	got, _ := subject.DeleteAccount(&input)
+	_, got := subject.DeleteAccount(&input)
 
-	if !reflect.DeepEqual(*got, *want) {
-		t.Errorf("wanted: %s\n got: %s", getStringStruct(want), getStringStruct(got))
+	if got.Error() != want {
+		t.Errorf("wanted: %s\n got: %s", want, got.Error())
 	}
 }
 
@@ -172,9 +160,8 @@ func TestAccountService_ShouldReturnSuccessfulFetch(t *testing.T) {
 	var responseObject models.ResponseObject
 	_ = json.Unmarshal([]byte(RightJsonResponse), &responseObject)
 	want := &models.FetchResponse{
-		ResBody:      &responseObject,
-		StatusCode:   200,
-		ErrorMessage: "",
+		ResBody:    &responseObject,
+		StatusCode: 200,
 	}
 
 	builder := getBuilder(RightJsonResponse, 200, false, RightPort)
@@ -191,30 +178,28 @@ func TestAccountService_ShouldReturnFailedFetch(t *testing.T) {
 		AccountId: AccountId,
 	}
 
-	want := &models.FetchResponse{
-		StatusCode:   404,
-		ErrorMessage: "id is not a valid uuid",
-	}
+	want := "Fetch: 404 - id is not a valid uuid"
 
 	builder := getBuilder(WrongJsonResponse, 404, false, RightPort)
 	subject := NewAccountService(&builder)
-	got, _ := subject.FetchAccount(&input)
+	_, got := subject.FetchAccount(&input)
 
-	if !reflect.DeepEqual(*got, *want) {
-		t.Errorf("wanted: %s\n got: %s", getStringStruct(want), getStringStruct(got))
+	if got.Error() != want {
+		t.Errorf("wanted: %s\n got: %s", want, got.Error())
 	}
 }
 
 func TestAccountService_ShouldReturnFailureWhenCreatingRequest(t *testing.T) {
 
-	want := "Failed creating request"
+	want := "2 - failed creating request"
 	builder := getBuilder("", 200, false, "80 ")
 	subject := NewAccountService(&builder)
 	var got error
 
 	_, got = subject.CreateAccount(&models.CreateRequest{})
+
 	if !strings.Contains(got.Error(), want) {
-		t.Errorf("wanted string: %s\n message got: %s", want, got)
+		t.Errorf("wanted: %s\n got: %s", want, got)
 	}
 
 	_, got = subject.DeleteAccount(&models.DeleteRequest{})
@@ -230,24 +215,24 @@ func TestAccountService_ShouldReturnFailureWhenCreatingRequest(t *testing.T) {
 
 func TestAccountService_ShouldReturnFailureWhenInvokingBackend(t *testing.T) {
 
-	want := "Failed invoking"
+	want := "3 - failed invoking backend"
 	builder := getBuilder("", 200, true, "80")
 	subject := NewAccountService(&builder)
 	var got error
 
 	_, got = subject.CreateAccount(&models.CreateRequest{})
 	if !strings.Contains(got.Error(), want) {
-		t.Errorf("wanted string: %s\n message got: %s", want, got)
+		t.Errorf("wanted: %s\n got: %s", want, got)
 	}
 
 	_, got = subject.DeleteAccount(&models.DeleteRequest{})
 	if !strings.Contains(got.Error(), want) {
-		t.Errorf("wanted string: %s\n message got: %s", want, got)
+		t.Errorf("wanted: %s\n got: %s", want, got)
 	}
 
 	_, got = subject.FetchAccount(&models.FetchRequest{})
 	if !strings.Contains(got.Error(), want) {
-		t.Errorf("wanted string: %s\n message got: %s", want, got)
+		t.Errorf("wanted: %s\n got: %s", want, got)
 	}
 }
 
@@ -258,11 +243,11 @@ func TestAccountService_ShouldReturnFailureWhenDecodingResponse(t *testing.T) {
 		statusCode int
 		want       string
 	}{
-		{"rightCreation", 201, "Failed decoding response"},
-		{"wrongCreation", 409, "Failed decoding error response"},
-		{"wrongDeletion", 400, "Failed decoding error response"},
-		{"rightFetch", 200, "Failed decoding response"},
-		{"wrongFetch", 404, "Failed decoding error response"},
+		{"rightCreation", 201, "6 - failed decoding response"},
+		{"wrongCreation", 409, "5 - failed decoding error response"},
+		{"wrongDeletion", 400, "5 - failed decoding error response"},
+		{"rightFetch", 200, "6 - failed decoding response"},
+		{"wrongFetch", 404, "5 - failed decoding error response"},
 	}
 
 	for _, v := range dataTable {
