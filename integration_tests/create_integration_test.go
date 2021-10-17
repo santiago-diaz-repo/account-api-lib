@@ -8,7 +8,6 @@ import (
 	"accountapi-lib-form3/pkg/error_handling"
 	"accountapi-lib-form3/pkg/models"
 	"encoding/json"
-	"github.com/google/uuid"
 	"strings"
 	"testing"
 )
@@ -21,7 +20,7 @@ func Test_CreateAccount(t *testing.T) {
 	var input models.CreateRequest
 	json.Unmarshal([]byte(CreationRequest), &input)
 
-	id := uuid.New().String()
+	id := "3b9ef55d-fe5e-434b-9f60-d5a0f9758887"
 
 	config := configuration.NewDefaultConfigBuilder().
 		WithPort("8080").

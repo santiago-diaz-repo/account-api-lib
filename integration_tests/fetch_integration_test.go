@@ -9,7 +9,6 @@ import (
 	"accountapi-lib-form3/pkg/models"
 	"encoding/json"
 	"fmt"
-	"github.com/google/uuid"
 	"strings"
 	"testing"
 )
@@ -18,7 +17,7 @@ func Test_FetchAccount(t *testing.T) {
 	var createInput models.CreateRequest
 	json.Unmarshal([]byte(CreationRequest), &createInput)
 
-	id := uuid.New().String()
+	id := "e6f3eed0-3f37-416a-9cfc-187c2caadb69"
 
 	createInput.Data.ID = id
 	createInput.Data.OrganisationID = id
@@ -41,7 +40,7 @@ func Test_FetchAccount(t *testing.T) {
 		}{
 			{"fetch successful", id, 200, id},
 			{"wrong-ID", "123", 400, "id is not a valid uuid"},
-			{"ID-does-not-exist", "1aa111aa-1111-1a1a-1111-1a1a1a1aa1a1", 404, fmt.Sprintf("record 1aa111aa-1111-1a1a-1111-1a1a1a1aa1a1 does not exist")},
+			{"ID-does-not-exist", "a82e431e-4087-4b64-961f-df6342f78c2f", 404, fmt.Sprintf("record a82e431e-4087-4b64-961f-df6342f78c2f does not exist")},
 		}
 
 		for _, v := range dataTable {

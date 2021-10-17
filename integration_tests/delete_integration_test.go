@@ -8,7 +8,6 @@ import (
 	"accountapi-lib-form3/pkg/error_handling"
 	"accountapi-lib-form3/pkg/models"
 	"encoding/json"
-	"github.com/google/uuid"
 	"strings"
 	"testing"
 )
@@ -17,7 +16,7 @@ func Test_DeleteAccount(t *testing.T) {
 	var createInput models.CreateRequest
 	json.Unmarshal([]byte(CreationRequest), &createInput)
 
-	id := uuid.New().String()
+	id := "2cb0f21d-6d15-40fe-8343-c09c82391aba"
 	createInput.Data.ID = id
 	createInput.Data.OrganisationID = id
 
