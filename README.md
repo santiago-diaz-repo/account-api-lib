@@ -117,3 +117,8 @@ fmt.Printf("%d",res.StatusCode)
 |404| Resource does not exist|
 |400| You sent something wrong to the account API|
 |409| There was a conflict when trying to create resource, it may already exist|
+
+
+I hope we can discuss this implementation in the next step of the process.
+
+Thank you.
