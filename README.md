@@ -25,9 +25,10 @@ that allows us to custom:
    a. `http.Client`: I defined a default http.Client with 4 seconds of *timeout* (as per my experience this is good time) to
 orientate our services to be more resilient. A component that uses this library can use a particular http.Client by configuring it
    through the builder.
+   
    b. Port: if backend API has a particular port, it is possible to configure it.
    
-   c. Api version: I noticed that `v1` is the first version of the account API, however, it is possible to configure a different version.
+   c. API version: I noticed that `v1` is the first version of the account API, however, it is possible to configure a different version.
 
 4. Debugging is important, that is why I defined a mechanism to print information about request and response, however, it is important to mention that
 it reduces performance a lot as per I discovered by executing a benchmark that you can find in benchmark folder. Enabling verbose log is only to debug.
