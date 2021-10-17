@@ -24,6 +24,7 @@ func Test_FetchAccount(t *testing.T) {
 
 	config := configuration.NewDefaultConfigBuilder().
 		WithPort("8080").
+		WithHost("accountapi").
 		Build()
 
 	subject := api_client.NewAccountService(&config)
@@ -74,4 +75,10 @@ func Test_FetchAccount(t *testing.T) {
 			})
 		}
 	}
+
+	// Cleaning environment
+	_,_ = subject.DeleteAccount(&models.DeleteRequest{
+		AccountId: id,
+		Version: 0,
+	})
 }

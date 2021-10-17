@@ -24,6 +24,7 @@ func Test_CreateAccount(t *testing.T) {
 
 	config := configuration.NewDefaultConfigBuilder().
 		WithPort("8080").
+		WithHost("accountapi").
 		Build()
 
 	subject := api_client.NewAccountService(&config)
@@ -51,7 +52,7 @@ func Test_CreateAccount(t *testing.T) {
 				acctErr := err.(*error_handling.AccountError)
 
 				if acctErr.GetCode() != v.StatusCodeWanted {
-					t.Errorf("wanted: %d\n got: %d", v.StatusCodeWanted, res.StatusCode)
+					t.Errorf("wanted: %d\n got: %d", v.StatusCodeWanted, acctErr.GetCode())
 				}
 
 				if !strings.Contains(acctErr.GetMessage(),v.MessageWanted) {
@@ -68,4 +69,11 @@ func Test_CreateAccount(t *testing.T) {
 			}
 		})
 	}
+
+	// Cleaning environment
+	_,_ = subject.DeleteAccount(&models.DeleteRequest{
+		AccountId: id,
+		Version: 0,
+	})
 }
+

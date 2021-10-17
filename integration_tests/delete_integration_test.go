@@ -22,6 +22,7 @@ func Test_DeleteAccount(t *testing.T) {
 
 	config := configuration.NewDefaultConfigBuilder().
 		WithPort("8080").
+		WithHost("accountapi").
 		Build()
 
 	subject := api_client.NewAccountService(&config)
@@ -70,4 +71,10 @@ func Test_DeleteAccount(t *testing.T) {
 			})
 		}
 	}
+
+	// Cleaning environment, despite these tests execute deletion, I wanted to make sure that this account created is always deleted
+	_,_ = subject.DeleteAccount(&models.DeleteRequest{
+		AccountId: id,
+		Version: 0,
+	})
 }
