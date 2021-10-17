@@ -24,6 +24,9 @@ const (
 	DefaultVerbose    = false
 )
 
+// NewConfigBuilder creates a new default configuration, everything can be
+// modified by other methods defined in this file. In order to modify timeout
+// it is possible to change the default http.Client.
 func NewConfigBuilder() ConfigBuilder {
 	configBuilder := new(configBuilderStruct)
 	configBuilder.config.port = DefaultPort
@@ -52,6 +55,13 @@ func (c *configBuilderStruct) Verbose() ConfigBuilder {
 	return c
 }
 
+// Build returns a new configuration to invoke backend API, it is important to clarify that
+// if Build receives a particular http.Client implementation and verbose logging is enabled,
+// this will modify http.Client.Transport to set verbose logging up. Additionally, if http.Client.Transport
+// is nil, this will assign a http.DefaultTransport.
+//
+// It is important to clarify that a component which uses this library has to pass around the host
+// where the backend API is located.
 func (c *configBuilderStruct) Build(host string) Config {
 	if c.config.httpClient == nil {
 		c.config.httpClient = NewDefaultHttpClient(DefaultTimeout, c.verboseLog)
@@ -66,6 +76,8 @@ func (c *configBuilderStruct) Build(host string) Config {
 	return &c.config
 }
 
+// setVerboseLogging modifies an http.Client by adding a loggingRoundTripper to Transport,
+// it is worth mentioning that this modification is based on the decorator pattern.
 func setVerboseLogging(httpClient *http.Client) {
 	transport := httpClient.Transport
 

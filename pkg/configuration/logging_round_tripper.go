@@ -13,6 +13,8 @@ type loggingRoundTripper struct {
 	defaultRoundTripper http.RoundTripper
 }
 
+// RoundTrip prints information related to request and response. It is important to make sure to use
+// this method to debug purposes as it reduces performance significantly.
 func (l *loggingRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
 
 	res, err := l.defaultRoundTripper.RoundTrip(req)

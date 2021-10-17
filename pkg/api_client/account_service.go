@@ -30,6 +30,7 @@ func NewAccountService(config *configuration2.Config) AccountManagement {
 	}
 }
 
+// CreateAccount allows to create an account by passing around some information about it
 func (a *AccountService) CreateAccount(reqModel *models2.CreateRequest) (*models2.CreateResponse, error) {
 
 	inp, err := json.Marshal(reqModel)
@@ -84,6 +85,7 @@ func (a *AccountService) CreateAccount(reqModel *models2.CreateRequest) (*models
 	}, nil
 }
 
+// DeleteAccount allows to delete a particular account by using its ID and version
 func (a *AccountService) DeleteAccount(reqModel *models2.DeleteRequest) (*models2.DeleteResponse, error) {
 	endpoint := fmt.Sprintf("%s%s/%s?version=%d", (*a.config).APIBasePath(), AccountsPath, reqModel.AccountId, reqModel.Version)
 
