@@ -55,6 +55,10 @@ storage in the account-API database. Nonetheless, it is possible to use an exter
    
 9. I defined a custom error struct, when there is an error either internally or when the account API is invoked, this library
 returns the custom error struct. Some status code can be found in the *Specification of errors* section.
+   
+10. I validated linters by using `golangci-lint`and there are no suggestions.
+    
+11. I validated code security by using `gosec` and there are no problems.
 
 ## Instructions to use this library
 According to requirements, this library can be implemented in any project, to do that you can follow the following steps:
