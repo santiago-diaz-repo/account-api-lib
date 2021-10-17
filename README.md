@@ -75,7 +75,6 @@ accountService := NewAccountService(&config)
 3. Create a request object, it depends on what you want to execute, `Create`, `Delete` or `Fetch`. For simplicity, 
 let's create a `DeleteRequest` object:
    
-
    ```
 req := models.DeleteRequest{ 
    AccountId: "12ab1977-6894-4d82-9968-4044df675fd9",
