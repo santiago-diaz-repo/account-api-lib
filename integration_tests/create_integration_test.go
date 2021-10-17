@@ -5,6 +5,7 @@ package integration_tests
 import (
 	"accountapi-lib-form3/pkg/api_client"
 	"accountapi-lib-form3/pkg/configuration"
+	"accountapi-lib-form3/pkg/error_handling"
 	"accountapi-lib-form3/pkg/models"
 	"encoding/json"
 	"github.com/google/uuid"
@@ -23,7 +24,7 @@ func Test_CreateAccount(t *testing.T) {
 	id := uuid.New().String()
 
 	config := configuration.NewDefaultConfigBuilder().
-		WithPort("8090").
+		WithPort("8080").
 		Build()
 
 	subject := api_client.NewAccountService(&config)
@@ -46,27 +47,24 @@ func Test_CreateAccount(t *testing.T) {
 			input.Data.ID = v.ID
 			input.Data.OrganisationID = v.OrganisationId
 			res, err := subject.CreateAccount(&input)
-			if err != nil {
-				t.Errorf("There was a problem when executing test %s, error: %v", v.TestName, err)
-			} else {
 
+			if err != nil {
+				acctErr := err.(*error_handling.AccountError)
+
+				if acctErr.GetCode() != v.StatusCodeWanted {
+					t.Errorf("wanted: %d\n got: %d", v.StatusCodeWanted, res.StatusCode)
+				}
+
+				if !strings.Contains(acctErr.GetMessage(),v.MessageWanted) {
+					t.Errorf("wanted: %s\n got: %s", v.MessageWanted, acctErr.GetMessage())
+				}
+			} else {
 				if res.StatusCode != v.StatusCodeWanted {
 					t.Errorf("statusCode wanted: %d\n statusCode got: %d", v.StatusCodeWanted, res.StatusCode)
 				}
 
-				if res.StatusCode == 201 {
-					if res.ErrorMessage != "" {
-						t.Errorf("there shouldn't be an error message \n got: %s", res.ErrorMessage)
-					}
-
-					if res.ResBody.Data.OrganisationID != v.MessageWanted {
-						t.Errorf("organisationId wanted: %s\n organisationId got: %s", v.MessageWanted, res.ResBody.Data.OrganisationID)
-					}
-
-				} else {
-					if !strings.Contains(res.ErrorMessage, v.MessageWanted) {
-						t.Errorf("wanted: %s\n got: %s", v.MessageWanted, res.ErrorMessage)
-					}
+				if res.ResBody.Data.OrganisationID != v.MessageWanted {
+					t.Errorf("organisationId wanted: %s\n organisationId got: %s", v.MessageWanted, res.ResBody.Data.OrganisationID)
 				}
 			}
 		})
