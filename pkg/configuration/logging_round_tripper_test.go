@@ -47,7 +47,7 @@ func stdOutPrinted(subject loggingRoundTripper) string {
 
 	_, _ = subject.RoundTrip(&d)
 
-	w.Close()
+	_ = w.Close()
 	out, _ := ioutil.ReadAll(r)
 	os.Stdout = rescueStdout
 	return string(out)

@@ -6,8 +6,8 @@ import (
 )
 
 type Config interface {
-	APIBasePath() string
-	HttpClient() *http.Client
+	GetAPIBasePath() string
+	GetHttpClient() *http.Client
 }
 
 type config struct {
@@ -18,12 +18,13 @@ type config struct {
 	verboseLog bool
 }
 
+// defaultScheme can be changed when service consumption has to be through another protocol such as secure http (https)
 const defaultScheme = "http"
 
-func (c *config) APIBasePath() string {
+func (c *config) GetAPIBasePath() string {
 	return fmt.Sprintf("%s://%s:%s/%s", defaultScheme, c.host, c.port, c.apiVersion)
 }
 
-func (c *config) HttpClient() *http.Client {
+func (c *config) GetHttpClient() *http.Client {
 	return c.httpClient
 }

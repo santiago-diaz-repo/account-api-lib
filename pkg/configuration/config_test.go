@@ -18,7 +18,7 @@ func getConfigStub(client *http.Client) *config {
 func TestConfig_ShouldReturnAPIBasePath(t *testing.T) {
 	want := "http://test:80/v1"
 	subject := getConfigStub(nil)
-	got := subject.APIBasePath()
+	got := subject.GetAPIBasePath()
 
 	if got != want {
 		t.Errorf("wanted: %s\n got: %s", want, got)
@@ -28,7 +28,7 @@ func TestConfig_ShouldReturnAPIBasePath(t *testing.T) {
 func TestConfig_ShouldReturnHttpClient(t *testing.T) {
 	want := &http.Client{}
 	subject := getConfigStub(want)
-	got := subject.HttpClient()
+	got := subject.GetHttpClient()
 	if got != want {
 		t.Errorf("wanted: %v\n got: %v", want, got)
 	}
