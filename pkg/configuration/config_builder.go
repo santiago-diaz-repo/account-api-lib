@@ -19,11 +19,11 @@ type configBuilderStruct struct {
 }
 
 const (
-	DefaultAPIVersion = "v1"
-	DefaultPort       = "80"
-	DefaultTimeout    = 4 * time.Second
-	DefaultVerbose    = false
-	DefaultHost       = "localhost"
+	defaultAPIVersion = "v1"
+	defaultPort       = "80"
+	defaultTimeout    = 4 * time.Second
+	defaultVerbose    = false
+	defaultHost       = "localhost"
 )
 
 // NewDefaultConfigBuilder creates a new default configuration, everything can be
@@ -31,10 +31,10 @@ const (
 // it is possible to change the default http.Client.
 func NewDefaultConfigBuilder() ConfigBuilder {
 	configBuilder := new(configBuilderStruct)
-	configBuilder.config.port = DefaultPort
-	configBuilder.config.apiVersion = DefaultAPIVersion
-	configBuilder.config.verboseLog = DefaultVerbose
-	configBuilder.config.host = DefaultHost
+	configBuilder.config.port = defaultPort
+	configBuilder.config.apiVersion = defaultAPIVersion
+	configBuilder.config.verboseLog = defaultVerbose
+	configBuilder.config.host = defaultHost
 	return configBuilder
 }
 
@@ -73,7 +73,7 @@ func (c *configBuilderStruct) Verbose() ConfigBuilder {
 func (c *configBuilderStruct) Build() Config {
 
 	if c.config.httpClient == nil {
-		c.config.httpClient = NewDefaultHttpClient(DefaultTimeout, c.verboseLog)
+		c.config.httpClient = NewDefaultHttpClient(defaultTimeout, c.verboseLog)
 	} else {
 		if c.verboseLog {
 			setVerboseLogging(c.httpClient)
