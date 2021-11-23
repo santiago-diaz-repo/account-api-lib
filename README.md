@@ -1,16 +1,8 @@
-# accountapi-lib-form3
+# accountapi-lib
 
-This implementation was built by Santiago Diaz.
+This library is something I did to practice and discover new things. In the following items you will see some considerations I had and instruction to use
+this library. It is worth mentioning that this library allows me to consume a particular API, however, it can be changed easily by changing the models.
 
-Here are my considerations while developing the assessment.
-
-## Requirements
-These requirements are based on the ones listed on the assessment repository:
-1. Library should be a client library suitable for use in another software project.
-2. Library have to implement the Create, Fetch, and Delete operations on the accounts resource.
-3. Library should be well tested.
-4. Library should not implement client-side validation
-5. Library should not use any external library, it should be `go get` friendly
 
 ## Considerations
 1. As it is a library, it should be decoupled from external resources, that is why I decided 
@@ -101,12 +93,6 @@ fmt.Printf("%d",res.StatusCode)
 
 ```
 
-## Considerations about docker-compose
-1. I created a Dockerfile in which I am executing unit and integrations tests with verbose output.
-2. I took your docker-compose, add my image, which is built and executed when executing `docker-compose up`,  and versioned it in my repository.
-3. To run your docker-compose I added the Database creation script to my repository. 
-4. To avoid errors related to network when executing `docker-compose up`, I am defining a network called *acct-lib-santiago*.
-
 
 ## Specification of errors
 
@@ -121,8 +107,3 @@ fmt.Printf("%d",res.StatusCode)
 |404| Resource does not exist|
 |400| You sent something wrong to the account API|
 |409| There was a conflict when trying to create resource, it may already exist|
-
----
-I hope we can discuss this implementation in the next step of the process.
-
-Thank you.
