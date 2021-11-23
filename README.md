@@ -1,4 +1,4 @@
-# accountapi-lib
+# account-api-lib
 
 This library is something I did to practice and discover new things. In the following items you will see some considerations I had and instruction to use
 this library. It is worth mentioning that this library allows me to consume a particular API, however, it can be changed easily by changing the models.
